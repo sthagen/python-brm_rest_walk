@@ -1,5 +1,5 @@
 black
-bs4
+beautifulsoup4
 flake8
 pylint
 pytest
