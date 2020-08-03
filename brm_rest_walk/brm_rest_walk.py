@@ -9,9 +9,9 @@ TS_FORMAT = "%Y-%m-%d %H:%M:%S"
 class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
     """Wrap the auth stuff and the REST BRM tree related walking."""
 
-    def __init__(self, server_url, username=None, api_token=None, wait=None):
+    def __init__(self, server_url, api_root=None, username=None, api_token=None, wait=None):
         self._user_url = server_url.rstrip("/")
-        self._base_url = f"{self._user_url}{brm_api_root}"
+        self._base_url = f"{self._user_url}{api_root if api_root else '/'}"
         self._wait = wait if wait else 0.0
 
         if username and api_token:
