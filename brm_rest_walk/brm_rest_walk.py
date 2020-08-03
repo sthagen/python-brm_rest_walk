@@ -3,6 +3,8 @@
 """Walk the REST accessible path tree of some binary repository management system."""
 import datetime as dti
 
+import requests
+
 TS_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
