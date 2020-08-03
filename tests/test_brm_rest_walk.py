@@ -22,3 +22,10 @@ def test_tree_walker_nok_missing_user_and_token():
     message = r"Must use API token \(other authentication means not implemented\)"
     with pytest.raises(ValueError, match=message):
         brm.TreeWalker(server)
+
+
+def test_tree_walker_nok_missing_token():
+    server = "not_important"
+    message = r"Must use API token \(other authentication means not implemented\)"
+    with pytest.raises(ValueError, match=message):
+        brm.TreeWalker(server, None, "a_user")
