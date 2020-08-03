@@ -6,6 +6,21 @@ import datetime as dti
 TS_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
+class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
+    """Wrap the auth stuff and the REST BRM tree related walking."""
+
+    def __init__(self, server_url, username=None, api_token=None, wait=None):
+        self._user_url = server_url.rstrip("/")
+        self._base_url = f"{self._user_url}{brm_api_root}"
+        self._wait = wait if wait else 0.0
+
+        if username and api_token:
+            self._session = requests.Session()
+            self._session.auth = (username, api_token)
+            return
+        raise ValueError("Must use API token (other authentication means not implemented)")
+
+
 def naive_timestamp(timestamp=None):
     """Logging helper."""
     if timestamp:
