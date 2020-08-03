@@ -15,3 +15,10 @@ def test_naive_timestamp_ok_datetime_parameter():
     dt = dti.datetime.now()
     ts = dt.strftime(brm.TS_FORMAT)
     assert brm.naive_timestamp(dt) == ts
+
+
+def test_tree_walker_nok_missing_user_and_token():
+    server = "not_important"
+    message = r"Must use API token \(other authentication means not implemented\)"
+    with pytest.raises(ValueError, match=message):
+        brm.TreeWalker(server)
