@@ -4,3 +4,8 @@ import json
 import pytest  # type: ignore
 
 import brm_rest_walk.cli as cli
+
+
+def test_main_ok_empty_array(capsys):
+    job = ['[]']
+    assert cli.main(job) is None
