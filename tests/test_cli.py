@@ -9,3 +9,10 @@ import brm_rest_walk.cli as cli
 def test_main_ok_empty_array():
     job = ['[]']
     assert cli.main(job) is None
+
+
+def test_main_nok_wrong_type_intng():
+    bad = 42
+    message = r"'int' object is not iterable"
+    with pytest.raises(TypeError, match=message):
+        cli.main(bad)
