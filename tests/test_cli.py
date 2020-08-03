@@ -13,6 +13,6 @@ def test_main_ok_empty_array():
 
 def test_main_nok_wrong_type_intng():
     bad = 42
-    message = r"'int' object is not iterable"
+    message = r"argument of type 'int' is not iterable"
     with pytest.raises(TypeError, match=message):
         cli.main(bad)
