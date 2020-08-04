@@ -4,6 +4,7 @@
 import datetime as dti
 
 import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 TS_FORMAT = "%Y-%m-%d %H:%M:%S"
 
