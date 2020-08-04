@@ -2,6 +2,7 @@
 # pylint: disable=expression-not-assigned,line-too-long
 """Walk the REST accessible path tree of some binary repository management system."""
 import datetime as dti
+import warnings
 
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
