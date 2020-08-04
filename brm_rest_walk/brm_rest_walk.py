@@ -14,11 +14,12 @@ TS_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
     """Wrap the auth stuff and the REST BRM tree related walking."""
-
+    
     def __init__(self, server_url, api_root=None, username=None, api_token=None, wait=None):
         self._user_url = server_url.rstrip("/")
         self._base_url = f"{self._user_url}{api_root if api_root else '/'}"
         self._wait = wait if wait else 0.0
+        self.repositories = {}
 
         if username and api_token:
             self._session = requests.Session()
@@ -41,6 +42,27 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
         html = response.text
         hrefs = [rel for rel in (tag['href'] for tag in BeautifulSoup(html, "html.parser").find_all("a", href=True)) if not rel.startswith('..')]
         return hrefs
+
+    def repository_map(self):
+        """Retrieve the repositories resource and parse into repository dict by key field.
+        
+        This implementation may or may not work with every BRM on earth ;-)
+        """
+        repositories_url = f"{self._base_url}repositories/"  # TODO hard coded metadata path
+        response = self._fetch(repositories_url)
+        response.raise_for_status()
+        response_json = response.json()  # TODO depends on JSON type of response
+        repo_types_ok = ('LOCAL', 'VIRTUAL')  # TODO specific pass filter - may need adjustment of other installs
+        for repository in response_json:  # TODO mapping relies on presence and semantics of key, type,
+            key, repo_type = repository.get('key'), repository.get('type')
+            if repo_type not in repo_types_ok:
+                continue
+            self.repositories[key] = {
+                "description": repository.get('description'),
+                "url": repository.get('url'),  # TODO meaningless entries where url is not given
+                "package_type": repository.get('packageType'),
+            }
+
 
 
 def naive_timestamp(timestamp=None):
