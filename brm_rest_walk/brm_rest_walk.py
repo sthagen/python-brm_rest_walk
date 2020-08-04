@@ -19,13 +19,13 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
         self._user_url = server_url.rstrip("/")
         self._base_url = f"{self._user_url}{api_root if api_root else '/'}"
         self._wait = wait if wait else 0.0
-        self.repositories = {}
-
         if username and api_token:
             self._session = requests.Session()
             self._session.auth = (username, api_token)
             return
         raise ValueError("Must use API token (other authentication means not implemented)")
+        self.repositories = {}
+        self.repository_map()
 
     def _fetch(self, url, params=None):
         """DRY."""
