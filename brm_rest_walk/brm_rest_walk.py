@@ -33,6 +33,14 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
             warnings.filterwarnings("ignore", category=InsecureRequestWarning)
             return self._session.get(url, verify=False, params=params)
 
+    def repository_page(self, url):
+        """Retrieve the repository tree page ofrom HTML a tags per tree link (excluding .. and return paths."""
+        response = self._fetch(url)
+        response.raise_for_status()
+        html = response.text
+        hrefs = [rel for rel in (tag['href'] for tag in BeautifulSoup(html, "html.parser").find_all("a", href=True)) if not rel.startswith('..')]
+        return hrefs
+
 
 def naive_timestamp(timestamp=None):
     """Logging helper."""
