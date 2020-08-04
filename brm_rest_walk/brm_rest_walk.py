@@ -22,6 +22,14 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
             return
         raise ValueError("Must use API token (other authentication means not implemented)")
 
+    def _fetch(self, url, params=None):
+        """DRY."""
+        params = {} if not params else params
+        self._wait and time.sleep(self._wait)
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=InsecureRequestWarning)
+            return self._session.get(url, verify=False, params=params)
+
 
 def naive_timestamp(timestamp=None):
     """Logging helper."""
