@@ -5,6 +5,7 @@ import datetime as dti
 import time
 import warnings
 
+from bs4 import BeautifulSoup
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
