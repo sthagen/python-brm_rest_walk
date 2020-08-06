@@ -22,7 +22,6 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
         if username and api_token:
             self._session = requests.Session()
             self._session.auth = (username, api_token)
-            return
         else:
             raise ValueError("Must use API token (other authentication means not implemented)")
         self.repositories = {}
