@@ -65,7 +65,6 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
             }
 
 
-
 def naive_timestamp(timestamp=None):
     """Logging helper."""
     if timestamp:
