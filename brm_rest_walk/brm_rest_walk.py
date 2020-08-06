@@ -35,8 +35,8 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
             warnings.filterwarnings("ignore", category=InsecureRequestWarning)
             return self._session.get(url, verify=False, params=params)
 
-    def repository_page(self, url):
-        """Retrieve the repository tree page ofrom HTML a tags per tree link (excluding .. and return paths."""
+    def repository_page_links(self, url):
+        """Retrieve the repository tree leaf ward links from HTML a tags per tree link (excluding ..)."""
         response = self._fetch(url)
         response.raise_for_status()
         html = response.text
