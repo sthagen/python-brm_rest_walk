@@ -3,7 +3,13 @@
 import datetime as dti
 import pytest  # type: ignore
 
+import tests.context as ctx
+
 import brm_rest_walk.brm_rest_walk as brm 
+
+
+def setup():
+    ctx.reset()
 
 
 def test_naive_timestamp_ok_empty_paramter():
