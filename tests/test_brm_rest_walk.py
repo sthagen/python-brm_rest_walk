@@ -208,6 +208,49 @@ def test_tree_walker_ok_repositories_ignored():
 
 
 @responses.activate
+def test_tree_walker_ok_links():
+    links_page = """\n
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>title</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <a href="f">f</a>       d  s u
+  </body>
+</html>
+    """
+    base_url = ctx.BRM_SERVER.rstrip('/')
+    api_base_url = f'{base_url}{ctx.BRM_API_ROOT}'
+    repositories_url = f'{api_base_url}repositories/'
+    links_url = f'{base_url}{ctx.BRM_API_ROOT}links/'
+
+    responses.add(responses.GET, base_url,
+                  json={'go': 'ahead'}, status=200)
+    responses.add(responses.GET, api_base_url,
+                  json={'api': 'found'}, status=200)
+
+    repositories_in = [
+        {
+            'key': '1',
+            'type': 'LOCAL',
+            'description': 'describing me',
+            'url': f'{api_base_url}data',
+            'packageType': 'packageType value',
+        }
+    ]
+    responses.add(responses.GET, repositories_url,
+                  json=repositories_in, status=200)
+    responses.add(responses.GET, links_url,
+                  body=links_page, status=200)
+    links = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token).links(links_url)
+    assert links == ['f']
+
+
+@responses.activate
 def test_tree_walker_ok_tree_page():
     base_url = ctx.BRM_SERVER.rstrip('/')
     api_base_url = f'{base_url}{ctx.BRM_API_ROOT}'
