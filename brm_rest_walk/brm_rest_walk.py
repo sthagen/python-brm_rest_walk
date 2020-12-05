@@ -3,6 +3,7 @@
 """Walk the REST accessible path tree of some binary repository management system."""
 import datetime as dti
 import os
+import random
 import time
 import warnings
 
