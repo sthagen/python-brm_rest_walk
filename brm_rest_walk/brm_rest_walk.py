@@ -91,9 +91,10 @@ def is_node(relative_link):
 class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
     """Wrap the auth stuff and the REST BRM tree related walking."""
     
-    def __init__(self, server_url, api_root=None, username=None, api_token=None, wait=None):
+    def __init__(self, server_url, api_root=None, repositories_path=None, username=None, api_token=None, wait=None):
         self._user_url = server_url.rstrip("/")
         self._base_url = f"{self._user_url}{api_root if api_root else '/'}"
+        self._repositories_url = f"{self._base_url}{repositories_path if repositories_path else 'repositories'}/"
         self._wait = wait if wait else 0.0
         if username and api_token:
             self._session = requests.Session()
@@ -124,7 +125,7 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
         
         This implementation may or may not work with every BRM on earth ;-)
         """
-        repositories_url = f"{self._base_url}repositories/"  # TODO hard coded metadata path
+        repositories_url = self._repositories_url
         response = self._fetch(repositories_url)
         response.raise_for_status()
         response_json = response.json()  # TODO depends on JSON type of response
