@@ -182,6 +182,32 @@ def test_tree_walker_ok_repositories():
 
 
 @responses.activate
+def test_tree_walker_ok_repositories_ignored():
+    repositories_in = [
+        {
+            'key': '1',
+            'type': 'IGNORE',
+            'description': 'describing me',
+            'url': 'asdasd',
+            'packageType': 'packageType value',
+        }
+    ]
+    repository_one_digest = {}
+    base_url = ctx.BRM_SERVER.rstrip('/')
+    api_base_url = f'{base_url}{ctx.BRM_API_ROOT}'
+    repositories_url = f'{base_url}{ctx.BRM_API_ROOT}repositories/'
+    responses.add(responses.GET, base_url,
+                  json={'go': 'ahead'}, status=200)
+    responses.add(responses.GET, api_base_url,
+                  json={'api': 'found'}, status=200)
+    responses.add(responses.GET, repositories_url,
+                  json=repositories_in, status=200)
+
+    repositories = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token).repository_map()
+    assert repositories == repository_one_digest
+
+
+@responses.activate
 def test_tree_walker_ok_tree_page():
     base_url = ctx.BRM_SERVER.rstrip('/')
     api_base_url = f'{base_url}{ctx.BRM_API_ROOT}'
