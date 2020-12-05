@@ -2,7 +2,7 @@
 import os
 BRM_FS_ROOT = "."
 BRM_SERVER = "https://example.com"
-BRM_API_ROOT = "https://example.com"
+BRM_API_ROOT = "api"
 BRM_USER = "none"
 BRM_TOKEN = "0xcafedafe"
 
