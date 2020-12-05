@@ -3,6 +3,9 @@
 import datetime as dti
 import pytest  # type: ignore
 
+import responses
+import requests
+
 import tests.context as ctx
 
 import brm_rest_walk.brm_rest_walk as brm 
@@ -92,3 +95,17 @@ def test_parse_autoindex_ok_minimal():
     f, d, s, u = 'a.txt', '22-Aug-2019 09:53', '2.50', 'MB'
     page_text = f'<a href="{f}">a.txt</a>       {d}  {s} {u}'
     assert brm.parse_autoindex(page_text) == [(f, d, s, u)]
+
+
+@responses.activate
+def test_meta_equests_and_mock_responses_simple():
+    responses.add(responses.GET, 'http://example.com/api/1/foobar',
+                  json={'error': 'not found'}, status=404)
+
+    resp = requests.get('http://example.com/api/1/foobar')
+
+    assert resp.json() == {"error": "not found"}
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == 'http://example.com/api/1/foobar'
+    assert responses.calls[0].response.text == '{"error": "not found"}'
