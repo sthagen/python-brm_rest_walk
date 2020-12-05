@@ -60,3 +60,7 @@ def test_easing_ok_no_easing():
 def test_easing_ok_with_easing():
     brm.EASING = True
     assert brm.easing() is None  # Call works no timing check
+
+
+def test_parse_autoindex_ok_empty():
+    assert brm.parse_autoindex('') == []
