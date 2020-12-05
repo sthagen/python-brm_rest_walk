@@ -46,3 +46,7 @@ def test_tree_walker_nok_missing_user():
 
 def test_is_node_ok_edge():
     assert brm.is_node('edge/') is False
+
+
+def test_is_node_ok_node():
+    assert brm.is_node('node') is True
