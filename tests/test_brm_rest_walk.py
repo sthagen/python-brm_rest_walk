@@ -112,7 +112,7 @@ def test_meta_equests_and_mock_responses_simple():
 
 
 @responses.activate
-def test_treewalker_ok_init():
+def test_tree_walker_ok_init():
     repositories = [
         {
             'key': '1',
