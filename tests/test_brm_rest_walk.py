@@ -8,7 +8,7 @@ import requests
 
 import tests.context as ctx
 
-import brm_rest_walk.brm_rest_walk as brm 
+import brm_rest_walk.brm_rest_walk as brm
 
 
 def setup():
@@ -213,25 +213,31 @@ def test_tree_walker_ok_tree_page():
     responses.add(responses.GET, repositories_url,
                   json=repositories_in, status=200)
 
-    f, d, s, u = 'a.txt', '22-Aug-2019 09:53', '2.50', 'MB'
-    page_text = f'<a href="{f}">a.txt</a>       {d}  {s} {u}'
+    f1, d1, s1, u1 = 'a.txt', '22-Aug-2019 09:53', '2.50', 'MB'
+    f2, d2, s2, u2 = 'b/', '22-Aug-2020 09:53', '1.23', 'kB'
+    page_text = (
+        f'<a href="{f1}">{f1}</a>       {d1}  {s1} {u1}'
+        '\n'
+        f'<a href="{f2}">{f2}</a>       {d2}  {s2} {u2}'
+    )
     responses.add(responses.GET, repository_one_digest['1']['url'],
                   json=page_text, status=200)
     parsed_page = {
         1: {
             'https://example.com/api/data/': {
-                '@e': [
-                    '\\"a.txt\\"'
-                ],
-                '\\"a.txt\\"':
-                    {
-                        '@n': {
-                            '@m': {
-
-                            },
-                            '@n': 'https://example.com/api/data//\\"a.txt\\"'
-                        }
+                '@e': ['\\"a.txt\\"', '\\"b/\\"'],
+                '\\"a.txt\\"': {
+                    '@n': {
+                        '@m': {},
+                        '@n': 'https://example.com/api/data//\\"a.txt\\"'
                     }
+                },
+                '\\"b/\\"': {
+                    '@n': {
+                        '@m': {},
+                        '@n': 'https://example.com/api/data//\\"b/\\"'
+                    }
+                }
             }
         }
     }
