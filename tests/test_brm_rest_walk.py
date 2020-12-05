@@ -50,3 +50,8 @@ def test_is_node_ok_edge():
 
 def test_is_node_ok_node():
     assert brm.is_node('node') is True
+
+
+def test_easing_ok_no_easing():
+    brm.EASING = False
+    assert brm.easing() is None  # Call works no timing check
