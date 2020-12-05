@@ -64,3 +64,7 @@ def test_easing_ok_with_easing():
 
 def test_parse_autoindex_ok_empty():
     assert brm.parse_autoindex('') == []
+
+
+def test_parse_autoindex_ok_nonsense():
+    assert brm.parse_autoindex('There is nothing useful in here') == []
