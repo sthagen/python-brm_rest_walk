@@ -159,7 +159,7 @@ def trial(argv=None):
 
     print(f"Job walking REST accessible BRM tree starts at {naive_timestamp()}")
     DEBUG and print(f'Context -> server({brm_server}), API root({brm_api_root}), remote user ({brm_user})')
-    walker = TreeWalker(username=brm_user, api_token=brm_token)
+    walker = TreeWalker(server_url=brm_server, api_root=brm_api_root, username=brm_user, api_token=brm_token)
     repositories = walker.repository_map()
     print(f"Found {len(repositories)} repositories with interesting types.")
     DEBUG and print(repositories)
