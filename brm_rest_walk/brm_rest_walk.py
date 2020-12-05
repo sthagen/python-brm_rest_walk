@@ -138,6 +138,7 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
                 "url": repository.get('url'),  # TODO meaningless entries where url is not given
                 "package_type": repository.get('packageType'),
             }
+        return self.repositories
 
     def repository_page(self, url):
         """Retrieve the repository tree page and return paths."""
