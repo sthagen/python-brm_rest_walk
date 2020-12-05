@@ -109,3 +109,37 @@ def test_meta_equests_and_mock_responses_simple():
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == 'http://example.com/api/1/foobar'
     assert responses.calls[0].response.text == '{"error": "not found"}'
+
+
+@responses.activate
+def test_treewalker_ok_init():
+    repositories = [
+        {
+            'key': '1',
+            'type': 'LOCAL',
+            'description': 'describing me',
+            'url': 'asdasd',
+            'packageType': 'packageType value',
+        }
+    ]
+    serialized_repositories = (
+        '[{"key": "1", "type": "LOCAL", "description": "describing me", "url": '
+        '"asdasd", "packageType": "packageType value"}]'
+    )
+    base_url = ctx.BRM_SERVER.rstrip('/')
+    api_base_url = f'{base_url}{ctx.BRM_API_ROOT}'
+    repositories_url = f'{base_url}{ctx.BRM_API_ROOT}repositories/'
+    responses.add(responses.GET, base_url,
+                  json={'go': 'ahead'}, status=200)
+    responses.add(responses.GET, api_base_url,
+                  json={'api': 'found'}, status=200)
+    responses.add(responses.GET, repositories_url,
+                  json=repositories, status=200)
+
+    walker = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token)
+
+    assert walker is not None
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == repositories_url
+    assert responses.calls[0].response.text == serialized_repositories

@@ -1,8 +1,8 @@
 """Setting up the context for test."""
 import os
 BRM_FS_ROOT = "."
-BRM_SERVER = "https://example.com"
-BRM_API_ROOT = "api"
+BRM_SERVER = "https://example.com/"
+BRM_API_ROOT = "/api/"
 BRM_USER = "none"
 BRM_TOKEN = "0xcafedafe"
 
