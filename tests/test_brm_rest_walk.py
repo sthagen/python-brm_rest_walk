@@ -146,7 +146,7 @@ def test_tree_walker_ok_init():
 
 
 @responses.activate
-def test_tree_walker_ok_init():
+def test_tree_walker_ok_repositories():
     repositories_in = [
         {
             'key': '1',
@@ -179,3 +179,87 @@ def test_tree_walker_ok_init():
 
     repositories = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token).repository_map()
     assert repositories == repository_one_digest
+
+
+@responses.activate
+def test_tree_walker_ok_tree_page():
+    base_url = ctx.BRM_SERVER.rstrip('/')
+    api_base_url = f'{base_url}{ctx.BRM_API_ROOT}'
+    repositories_in = [
+        {
+            'key': '1',
+            'type': 'LOCAL',
+            'description': 'describing me',
+            'url': f'{api_base_url}data/',
+            'packageType': 'packageType value',
+        }
+    ]
+    serialized_repositories = (
+        '[{"key": "1", "type": "LOCAL", "description": "describing me", "url": '
+        f'"{api_base_url}data/", "packageType": "packageType value"}}]'
+    )
+    repository_one_digest = {
+        '1': {
+            'description': 'describing me',
+            'package_type': 'packageType value',
+            'url': f'{api_base_url}data/',
+        }
+    }
+    repositories_url = f'{api_base_url}repositories/'
+    responses.add(responses.GET, base_url,
+                  json={'go': 'ahead'}, status=200)
+    responses.add(responses.GET, api_base_url,
+                  json={'api': 'found'}, status=200)
+    responses.add(responses.GET, repositories_url,
+                  json=repositories_in, status=200)
+
+    f, d, s, u = 'a.txt', '22-Aug-2019 09:53', '2.50', 'MB'
+    page_text = f'<a href="{f}">a.txt</a>       {d}  {s} {u}'
+    responses.add(responses.GET, repository_one_digest['1']['url'],
+                  json=page_text, status=200)
+    parsed_page = {
+        1: {
+            'https://example.com/api/data/': {
+                '@e': [
+                    '\\"a.txt\\"'
+                ],
+                '\\"a.txt\\"':
+                    {
+                        '@n': {
+                            '@m': {
+
+                            },
+                            '@n': 'https://example.com/api/data//\\"a.txt\\"'
+                        }
+                    }
+            }
+        }
+    }
+    walker = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token)
+    assert walker is not None
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == repositories_url
+    assert responses.calls[0].response.text == serialized_repositories
+    repositories = walker.repository_map()
+    assert repositories
+    level = 1
+    tree = {level: {}}
+    for key, repository in repositories.items():
+        url = repository["url"]
+        data = walker.repository_page(url)
+        tree[level][url] = {brm.EDGE: data[brm.HREFS]}
+        for url, downward_links in tree[level].items():
+            for relative_link in downward_links[brm.EDGE]:
+                tree[level][url][relative_link] = {}
+                node = brm.is_node(relative_link)
+                if not node and relative_link:
+                    brm.easing()
+                    data = walker.repository_page(f"{url}/{relative_link}")
+                    tree[level][url][relative_link][brm.EDGE] = data[brm.HREFS]
+                else:
+                    data = walker.repository_page(f"{url}")
+                    tree[level][url][relative_link][brm.NODE] = {
+                        brm.NODE: f"{url}/{relative_link}",
+                        brm.META: data[brm.META].get(relative_link, {}),
+                    }
+    assert tree == parsed_page
