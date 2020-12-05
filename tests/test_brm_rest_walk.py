@@ -42,3 +42,7 @@ def test_tree_walker_nok_missing_user():
     message = r"Must use API token \(other authentication means not implemented\)"
     with pytest.raises(ValueError, match=message):
         brm.TreeWalker(server, None, username=None, api_token="a_token")
+
+
+def test_is_node_ok_edge():
+    assert brm.is_node('edge/') is False
