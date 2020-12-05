@@ -143,3 +143,39 @@ def test_tree_walker_ok_init():
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == repositories_url
     assert responses.calls[0].response.text == serialized_repositories
+
+
+@responses.activate
+def test_tree_walker_ok_init():
+    repositories_in = [
+        {
+            'key': '1',
+            'type': 'LOCAL',
+            'description': 'describing me',
+            'url': 'asdasd',
+            'packageType': 'packageType value',
+        }
+    ]
+    serialized_repositories = (
+        '[{"key": "1", "type": "LOCAL", "description": "describing me", "url": '
+        '"asdasd", "packageType": "packageType value"}]'
+    )
+    repository_one_digest = {
+        '1': {
+            'description': 'describing me',
+            'package_type': 'packageType value',
+            'url': 'asdasd',
+        }
+    }
+    base_url = ctx.BRM_SERVER.rstrip('/')
+    api_base_url = f'{base_url}{ctx.BRM_API_ROOT}'
+    repositories_url = f'{base_url}{ctx.BRM_API_ROOT}repositories/'
+    responses.add(responses.GET, base_url,
+                  json={'go': 'ahead'}, status=200)
+    responses.add(responses.GET, api_base_url,
+                  json={'api': 'found'}, status=200)
+    responses.add(responses.GET, repositories_url,
+                  json=repositories_in, status=200)
+
+    repositories = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token).repository_map()
+    assert repositories == repository_one_digest
