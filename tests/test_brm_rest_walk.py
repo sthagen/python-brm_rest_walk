@@ -190,19 +190,19 @@ def test_tree_walker_ok_tree_page():
             'key': '1',
             'type': 'LOCAL',
             'description': 'describing me',
-            'url': f'{api_base_url}data/',
+            'url': f'{api_base_url}data',
             'packageType': 'packageType value',
         }
     ]
     serialized_repositories = (
         '[{"key": "1", "type": "LOCAL", "description": "describing me", "url": '
-        f'"{api_base_url}data/", "packageType": "packageType value"}}]'
+        f'"{api_base_url}data", "packageType": "packageType value"}}]'
     )
     repository_one_digest = {
         '1': {
             'description': 'describing me',
             'package_type': 'packageType value',
-            'url': f'{api_base_url}data/',
+            'url': f'{api_base_url}data',
         }
     }
     repositories_url = f'{api_base_url}repositories/'
@@ -215,28 +215,40 @@ def test_tree_walker_ok_tree_page():
 
     f1, d1, s1, u1 = 'a.txt', '22-Aug-2019 09:53', '2.50', 'MB'
     f2, d2, s2, u2 = 'b/', '22-Aug-2020 09:53', '1.23', 'kB'
-    page_text = (
+    page_a_text = (
         f'<a href="{f1}">{f1}</a>       {d1}  {s1} {u1}'
         '\n'
         f'<a href="{f2}">{f2}</a>       {d2}  {s2} {u2}'
     )
     responses.add(responses.GET, repository_one_digest['1']['url'],
-                  json=page_text, status=200)
-    parsed_page = {
+                  body=page_a_text, status=200)
+
+    f3, d3, s3, u3 = 'b.txt', '22-Aug-2020 09:53', '1.23', 'kB'
+    page_b_text = (
+        f'<a href="{f3}">{f3}</a>       {d3}  {s3} {u3}'
+        '\n'
+        'we ignore this'
+    )
+
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/b/",
+                  body=page_b_text, status=200)
+    expected_tree = {
         1: {
-            'https://example.com/api/data/': {
-                '@e': ['\\"a.txt\\"', '\\"b/\\"'],
-                '\\"a.txt\\"': {
+            'https://example.com/api/data': {
+                '@e': ['a.txt', 'b/'],
+                'a.txt': {
                     '@n': {
-                        '@m': {},
-                        '@n': 'https://example.com/api/data//\\"a.txt\\"'
+                        '@m': (
+                            'a.txt',
+                            '22-Aug-2019 09:53',
+                            '2.50',
+                            'MB'
+                        ),
+                        '@n': 'https://example.com/api/data/a.txt'
                     }
                 },
-                '\\"b/\\"': {
-                    '@n': {
-                        '@m': {},
-                        '@n': 'https://example.com/api/data//\\"b/\\"'
-                    }
+                'b/': {
+                    '@e': ['b.txt']
                 }
             }
         }
@@ -268,4 +280,4 @@ def test_tree_walker_ok_tree_page():
                         brm.NODE: f"{url}/{relative_link}",
                         brm.META: data[brm.META].get(relative_link, {}),
                     }
-    assert tree == parsed_page
+    assert tree == expected_tree
