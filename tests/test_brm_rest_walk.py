@@ -55,3 +55,8 @@ def test_is_node_ok_node():
 def test_easing_ok_no_easing():
     brm.EASING = False
     assert brm.easing() is None  # Call works no timing check
+
+
+def test_easing_ok_with_easing():
+    brm.EASING = True
+    assert brm.easing() is None  # Call works no timing check
