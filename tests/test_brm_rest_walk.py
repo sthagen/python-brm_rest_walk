@@ -466,28 +466,28 @@ def test_tree_walker_ok_tree_leaf_page():
     )
     responses.add(responses.GET, f"{repository_one_digest['1']['url']}/b/",
                   body=page_b_text, status=200)
+
     expected_tree = {
         1: {
             'https://example.com/api/data': {
                 '@e': ['a.txt', 'b/'],
                 'a.txt': {
                     '@n': {
-                        '@m': (
-                            'a.txt',
-                            '22-Aug-2019 09:53',
-                            '2.50',
-                            'MB'
-                        ),
-                        '@n': 'https://example.com/api/data/a.txt'
+                        '@m': ('a.txt',
+                               '22-Aug-2019 09:53',
+                               '2.50',
+                               'MB'),
+                        '@n': 'https://example.com/api/data/a.txt',
+                        'md5': '921214c14fda7cd320caf04cfa26a224',
+                        'sha1': '7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c',
+                        'sha256': 'fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f'
                     }
                 },
-                'b/': {
-                    '@e': ['b.txt']
-                }
+                'b/': {'@e': ['b.txt']
+                       }
             }
         }
     }
-
     name_a_txt = "a.txt"
     content_a_txt = "This is ${data_root}/a.txt with a newline at the end of the file.\n"
     name_a_txt_md5 = "a.txt.md5"
@@ -550,5 +550,6 @@ def test_tree_walker_ok_tree_leaf_page():
                     tree[level][url][relative_link][brm.NODE] = {
                         brm.NODE: f"{url}/{relative_link}",
                         brm.META: data[brm.META].get(relative_link, {}),
+                        **walker.hashes(f"{url}/{relative_link}"),
                     }
     assert tree == expected_tree
