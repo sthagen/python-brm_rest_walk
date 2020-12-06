@@ -390,8 +390,9 @@ def test_tree_walker_ok_tree_page():
                     'name': 'a.txt',
                     'url': 'https://example.com/api/data/a.txt'
                 },
-                'b/': {'@e': ['b.txt']
-                       }
+                'b/': {
+                    '@e': ['b.txt']
+                }
             }
         }
     }
