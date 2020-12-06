@@ -267,7 +267,7 @@ def test_tree_walker_ok_hashes():
     responses.add(responses.GET, f"{leaf_a_url}.{brm.SHA256}",
                   body=content_a_txt_sha256, status=200)
 
-    digests = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token).links(leaf_a_url)
+    digests = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token).hashes(leaf_a_url)
     assert digests == expected_digests
 
 
