@@ -491,7 +491,7 @@ def test_tree_walker_ok_tree_leaf_page():
                                '22-Aug-2019 09:53',
                                '2.50',
                                'MB'),
-                        '@n': 'https://example.com/api/data/a.txt',
+                        'url': 'https://example.com/api/data/a.txt',
                         'md5': '921214c14fda7cd320caf04cfa26a224',
                         'sha1': '7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c',
                         'sha256': 'fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f'
@@ -563,7 +563,7 @@ def test_tree_walker_ok_tree_leaf_page():
                 else:
                     data = walker.repository_page(f"{url}")
                     tree[level][url][relative_link][brm.NODE] = {
-                        brm.NODE: f"{url}/{relative_link}",
+                        "url": f"{url}/{relative_link}",
                         brm.META: data[brm.META].get(relative_link, {}),
                         **walker.hashes(f"{url}/{relative_link}"),
                     }
@@ -631,7 +631,7 @@ def test_tree_walker_ok_tree_edge_leaf_page():
                                '22-Aug-2019 09:53',
                                '2.50',
                                'MB'),
-                        '@n': 'https://example.com/api/data/a.txt',
+                        'url': 'https://example.com/api/data/a.txt',
                         'md5': '921214c14fda7cd320caf04cfa26a224',
                         'sha1': '7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c',
                         'sha256': 'fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f'
@@ -645,7 +645,7 @@ def test_tree_walker_ok_tree_edge_leaf_page():
                                    '22-Aug-2020 09:53',
                                    '1.23',
                                    'kB'),
-                            '@n': 'https://example.com/api/data/b/b.txt',
+                            'url': 'https://example.com/api/data/b/b.txt',
                             'md5': '640ecd5a7cf34cbf8a921b37731db28b',
                             'sha1': 'd07cd80af550e403df824d64feb67e34a9fbf020',
                             'sha256': '98dccf9bba2c9294ffcf7772d9dc72f80580d6c08cae4537dd861faa3c85d25e'
@@ -715,7 +715,7 @@ def test_tree_walker_ok_tree_edge_leaf_page():
                 else:
                     data = walker.repository_page(f"{url}")
                     tree[level][url][relative_link][brm.NODE] = {
-                        brm.NODE: f"{url}/{relative_link}",
+                        "url": f"{url}/{relative_link}",
                         brm.META: data[brm.META].get(relative_link, {}),
                         **walker.hashes(f"{url}/{relative_link}"),
                     }
@@ -730,7 +730,7 @@ def test_tree_walker_ok_tree_edge_leaf_page():
                     else:
                         data = walker.repository_page(f"{url}/{relative_link}")
                         tree[level][url][relative_link][p1][brm.NODE] = {
-                            brm.NODE: f"{url}/{relative_link}{p1}",
+                            "url": f"{url}/{relative_link}{p1}",
                             brm.META: data[brm.META].get(p1, {}),
                             **walker.hashes(f"{url}/{relative_link}{p1}"),
                         }
