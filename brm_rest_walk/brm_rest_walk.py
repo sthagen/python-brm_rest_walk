@@ -290,7 +290,12 @@ def trial(argv=None):
             #                         else:
             #                             tree[level][url][relative_link][p1][p2][p3][p4][p5][NODE] = f"{url}/{relative_link}{p1}{p2}{p3}{p4}{p5}"
 
-    with open("tree.json", "wt", encoding=ENCODING) as handle:
-        json.dump(tree, handle, indent=2)
+    dump(tree)
     print(f"Job walking REST accessible BRM tree finished at {naive_timestamp()}")
     return 0
+
+
+def dump(tree):
+    """Minimal implementation of JSON dump."""
+    with open("tree.json", "wt", encoding=ENCODING) as handle:
+        json.dump(tree, handle, indent=2)
