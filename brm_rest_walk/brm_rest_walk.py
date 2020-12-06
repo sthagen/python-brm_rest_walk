@@ -84,6 +84,11 @@ def parse_autoindex(page_text):
     return parsed
 
 
+def autoindex_map(html):
+    """parse autoindex for tuples describing files and reshape the list of tuples into a map."""
+    return {f: {"name": f, "api_ts": d, "h_size": s, "h_unit": u} for f, d, s, u in parse_autoindex(html)}
+
+
 def is_node(relative_link):
     """In directory listings a folder is indeicated by a trailing slash (/)."""
     node = not relative_link.endswith('/')
@@ -158,7 +163,7 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
         response = self._fetch(url)
         response.raise_for_status()
         html = response.text
-        page_map = {t[0]: t for t in parse_autoindex(html)}
+        page_map = autoindex_map(html)
         hrefs = [rel for rel in (tag['href'] for tag in BeautifulSoup(html, "html.parser").find_all("a", href=True)) if not rel.startswith('..')]
         return {HREFS: hrefs, META: page_map}
 
