@@ -423,6 +423,25 @@ def test_tree_walker_ok_tree_leaf_page():
             }
         }
     }
+
+    name_a_txt = "a.txt"
+    content_a_txt = "This is ${data_root}/a.txt with a newline at the end of the file.\n"
+    name_a_txt_md5 = "a.txt.md5"
+    content_a_txt_md5 = "921214c14fda7cd320caf04cfa26a224"
+    name_a_txt_sha1 = "a.txt.sha1"
+    content_a_txt_sha1 = "7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c"
+    name_a_txt_sha256 = "a.txt.sha256"
+    content_a_txt_sha256 = "fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f"
+
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/{name_a_txt}",
+                  body=content_a_txt, status=200)
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/{name_a_txt_md5}",
+                  body=content_a_txt_md5, status=200)
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/{name_a_txt_sha1}",
+                  body=content_a_txt_sha1, status=200)
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/{name_a_txt_sha256}",
+                  body=content_a_txt_sha256, status=200)
+
     name_b_txt = "b.txt"
     content_b_txt = "This is ${data_root}/b/b.txt with a newline at the end of the file.\n"
     name_b_txt_md5 = "b.txt.md5"
