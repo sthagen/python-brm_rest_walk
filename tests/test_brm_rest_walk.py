@@ -298,6 +298,10 @@ def test_tree_walker_ok_tree_page():
         '\n'
         'we ignore this'
     )
+    content_b_txt = "This is ${data_root}/b/b.txt with a newline at the end of the file.\n"
+    content_n_txt_md5 = "640ecd5a7cf34cbf8a921b37731db28b"
+    content_n_txt_sha1 = "d07cd80af550e403df824d64feb67e34a9fbf020"
+    content_n_txt_sha256 = "98dccf9bba2c9294ffcf7772d9dc72f80580d6c08cae4537dd861faa3c85d25e"
 
     responses.add(responses.GET, f"{repository_one_digest['1']['url']}/b/",
                   body=page_b_text, status=200)
