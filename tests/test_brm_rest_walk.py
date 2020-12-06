@@ -483,8 +483,9 @@ def test_tree_walker_ok_tree_leaf_page():
                         'sha256': 'fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f'
                     }
                 },
-                'b/': {'@e': ['b.txt']
-                       }
+                'b/': {
+                    '@e': ['b.txt']
+                }
             }
         }
     }
