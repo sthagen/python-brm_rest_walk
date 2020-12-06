@@ -91,6 +91,10 @@ def test_parse_autoindex_ok_nonsense():
     assert brm.parse_autoindex('There is nothing useful in here') == []
 
 
+def test_parse_autoindex_map_ok_nonsense():
+    assert brm.autoindex_map('There is nothing useful in here') == {}
+
+
 def test_parse_autoindex_nok_start_token_nonsense():
     message = r"not enough values to unpack \(expected 2, got 1\)"
     with pytest.raises(ValueError, match=message):
