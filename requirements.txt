@@ -2,6 +2,7 @@ black
 beautifulsoup4
 coverage
 flake8
+mypy
 pylint
 pytest
 requests
