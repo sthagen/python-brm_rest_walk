@@ -385,18 +385,15 @@ def test_tree_walker_ok_tree_page():
                 '@e': ['a.txt', 'b/'],
                 'a.txt': {
                     '@n': {
-                        '@m': (
-                            'a.txt',
-                            '22-Aug-2019 09:53',
-                            '2.50',
-                            'MB'
-                        ),
-                        '@n': 'https://example.com/api/data/a.txt'
+                        'api_ts': '22-Aug-2019 09:53',
+                        'h_size': '2.50',
+                        'h_unit': 'MB',
+                        'name': 'a.txt',
+                        'url': 'https://example.com/api/data/a.txt'
                     }
                 },
-                'b/': {
-                    '@e': ['b.txt']
-                }
+                'b/': {'@e': ['b.txt']
+                       }
             }
         }
     }
@@ -424,8 +421,8 @@ def test_tree_walker_ok_tree_page():
                 else:
                     data = walker.repository_page(f"{url}")
                     tree[level][url][relative_link][brm.NODE] = {
-                        brm.NODE: f"{url}/{relative_link}",
-                        brm.META: data[brm.META].get(relative_link, {}),
+                        "url": f"{url}/{relative_link}",
+                        **data[brm.META].get(relative_link, {"name": None, "api_ts": None, "h_size": None, "h_unit": None}),
                     }
     assert tree == expected_tree
 
@@ -564,7 +561,7 @@ def test_tree_walker_ok_tree_leaf_page():
                     data = walker.repository_page(f"{url}")
                     tree[level][url][relative_link][brm.NODE] = {
                         "url": f"{url}/{relative_link}",
-                        brm.META: data[brm.META].get(relative_link, {}),
+                        **data[brm.META].get(relative_link, {"name": None, "api_ts": None, "h_size": None, "h_unit": None}),
                         **walker.hashes(f"{url}/{relative_link}"),
                     }
     assert tree == expected_tree
@@ -716,7 +713,7 @@ def test_tree_walker_ok_tree_edge_leaf_page():
                     data = walker.repository_page(f"{url}")
                     tree[level][url][relative_link][brm.NODE] = {
                         "url": f"{url}/{relative_link}",
-                        brm.META: data[brm.META].get(relative_link, {}),
+                        **data[brm.META].get(relative_link, {"name": None, "api_ts": None, "h_size": None, "h_unit": None}),
                         **walker.hashes(f"{url}/{relative_link}"),
                     }
             for relative_link in downward_links[brm.EDGE]:
@@ -731,7 +728,7 @@ def test_tree_walker_ok_tree_edge_leaf_page():
                         data = walker.repository_page(f"{url}/{relative_link}")
                         tree[level][url][relative_link][p1][brm.NODE] = {
                             "url": f"{url}/{relative_link}{p1}",
-                            brm.META: data[brm.META].get(p1, {}),
+                            **data[brm.META].get(p1, {"name": None, "api_ts": None, "h_size": None, "h_unit": None}),
                             **walker.hashes(f"{url}/{relative_link}{p1}"),
                         }
 
