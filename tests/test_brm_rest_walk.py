@@ -568,3 +568,171 @@ def test_tree_walker_ok_tree_leaf_page():
                         **walker.hashes(f"{url}/{relative_link}"),
                     }
     assert tree == expected_tree
+
+
+@responses.activate
+def test_tree_walker_ok_tree_edge_leaf_page():
+    base_url = ctx.BRM_SERVER.rstrip('/')
+    api_base_url = f'{base_url}{ctx.BRM_API_ROOT}'
+    repositories_in = [
+        {
+            'key': '1',
+            'type': 'LOCAL',
+            'description': 'describing me',
+            'url': f'{api_base_url}data',
+            'packageType': 'packageType value',
+        }
+    ]
+    serialized_repositories = (
+        '[{"key": "1", "type": "LOCAL", "description": "describing me", "url": '
+        f'"{api_base_url}data", "packageType": "packageType value"}}]'
+    )
+    repository_one_digest = {
+        '1': {
+            'description': 'describing me',
+            'package_type': 'packageType value',
+            'url': f'{api_base_url}data',
+        }
+    }
+    repositories_url = f'{api_base_url}repositories/'
+    responses.add(responses.GET, base_url,
+                  json={'go': 'ahead'}, status=200)
+    responses.add(responses.GET, api_base_url,
+                  json={'api': 'found'}, status=200)
+    responses.add(responses.GET, repositories_url,
+                  json=repositories_in, status=200)
+
+    f1, d1, s1, u1 = 'a.txt', '22-Aug-2019 09:53', '2.50', 'MB'
+    f2, d2, s2, u2 = 'b/', '22-Aug-2020 09:53', '1.23', 'kB'
+    page_a_text = (
+        f'<a href="{f1}">{f1}</a>       {d1}  {s1} {u1}'
+        '\n'
+        f'<a href="{f2}">{f2}</a>       {d2}  {s2} {u2}'
+    )
+    responses.add(responses.GET, repository_one_digest['1']['url'],
+                  body=page_a_text, status=200)
+
+    f3, d3, s3, u3 = 'b.txt', '22-Aug-2020 09:53', '1.23', 'kB'
+    page_b_text = (
+        f'<a href="{f3}">{f3}</a>       {d3}  {s3} {u3}'
+        '\n'
+        'we ignore this'
+    )
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/b/",
+                  body=page_b_text, status=200)
+
+    expected_tree = {
+        1: {
+            'https://example.com/api/data': {
+                '@e': ['a.txt', 'b/'],
+                'a.txt': {
+                    '@n': {
+                        '@m': ('a.txt',
+                               '22-Aug-2019 09:53',
+                               '2.50',
+                               'MB'),
+                        '@n': 'https://example.com/api/data/a.txt',
+                        'md5': '921214c14fda7cd320caf04cfa26a224',
+                        'sha1': '7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c',
+                        'sha256': 'fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f'
+                    }
+                },
+                'b/': {
+                    '@e': ['b.txt'],
+                    'b.txt': {
+                        '@n': {
+                            '@m': ('b.txt',
+                                   '22-Aug-2020 09:53',
+                                   '1.23',
+                                   'kB'),
+                            '@n': 'https://example.com/api/data/b/b.txt',
+                            'md5': '640ecd5a7cf34cbf8a921b37731db28b',
+                            'sha1': 'd07cd80af550e403df824d64feb67e34a9fbf020',
+                            'sha256': '98dccf9bba2c9294ffcf7772d9dc72f80580d6c08cae4537dd861faa3c85d25e'
+                        }
+                    }
+                }
+            }
+        }
+    }
+    name_a_txt = "a.txt"
+    content_a_txt = "This is ${data_root}/a.txt with a newline at the end of the file.\n"
+    name_a_txt_md5 = "a.txt.md5"
+    content_a_txt_md5 = "921214c14fda7cd320caf04cfa26a224"
+    name_a_txt_sha1 = "a.txt.sha1"
+    content_a_txt_sha1 = "7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c"
+    name_a_txt_sha256 = "a.txt.sha256"
+    content_a_txt_sha256 = "fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f"
+
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/{name_a_txt}",
+                  body=content_a_txt, status=200)
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/{name_a_txt_md5}",
+                  body=content_a_txt_md5, status=200)
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/{name_a_txt_sha1}",
+                  body=content_a_txt_sha1, status=200)
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/{name_a_txt_sha256}",
+                  body=content_a_txt_sha256, status=200)
+
+    name_b_txt = "b.txt"
+    content_b_txt = "This is ${data_root}/b/b.txt with a newline at the end of the file.\n"
+    name_b_txt_md5 = "b.txt.md5"
+    content_b_txt_md5 = "640ecd5a7cf34cbf8a921b37731db28b"
+    name_b_txt_sha1 = "b.txt.sha1"
+    content_b_txt_sha1 = "d07cd80af550e403df824d64feb67e34a9fbf020"
+    name_b_txt_sha256 = "b.txt.sha256"
+    content_b_txt_sha256 = "98dccf9bba2c9294ffcf7772d9dc72f80580d6c08cae4537dd861faa3c85d25e"
+
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/b/{name_b_txt}",
+                  body=content_b_txt, status=200)
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/b/{name_b_txt_md5}",
+                  body=content_b_txt_md5, status=200)
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/b/{name_b_txt_sha1}",
+                  body=content_b_txt_sha1, status=200)
+    responses.add(responses.GET, f"{repository_one_digest['1']['url']}/b/{name_b_txt_sha256}",
+                  body=content_b_txt_sha256, status=200)
+
+    walker = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token)
+    assert walker is not None
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == repositories_url
+    assert responses.calls[0].response.text == serialized_repositories
+    repositories = walker.repository_map()
+    assert repositories
+    level = 1
+    tree = {level: {}}
+    for key, repository in repositories.items():
+        url = repository["url"]
+        data = walker.repository_page(url)
+        tree[level][url] = {brm.EDGE: data[brm.HREFS]}
+        for url, downward_links in tree[level].items():
+            for relative_link in downward_links[brm.EDGE]:
+                tree[level][url][relative_link] = {}
+                node = brm.is_node(relative_link)
+                if not node and relative_link:
+                    brm.easing()
+                    data = walker.repository_page(f"{url}/{relative_link}")
+                    tree[level][url][relative_link][brm.EDGE] = data[brm.HREFS]
+                else:
+                    data = walker.repository_page(f"{url}")
+                    tree[level][url][relative_link][brm.NODE] = {
+                        brm.NODE: f"{url}/{relative_link}",
+                        brm.META: data[brm.META].get(relative_link, {}),
+                        **walker.hashes(f"{url}/{relative_link}"),
+                    }
+            for relative_link in downward_links[brm.EDGE]:
+                for p1 in tree[level][url][relative_link].get(brm.EDGE, []):
+                    tree[level][url][relative_link][p1] = {}
+                    node = brm.is_node(p1)
+                    if not node and relative_link:
+                        brm.easing()
+                        data = walker.repository_page(f"{url}/{relative_link}{p1}")
+                        tree[level][url][relative_link][p1][brm.EDGE] = data[brm.HREFS]
+                    else:
+                        data = walker.repository_page(f"{url}/{relative_link}")
+                        tree[level][url][relative_link][p1][brm.NODE] = {
+                            brm.NODE: f"{url}/{relative_link}{p1}",
+                            brm.META: data[brm.META].get(p1, {}),
+                            **walker.hashes(f"{url}/{relative_link}{p1}"),
+                        }
+
+    assert tree == expected_tree
