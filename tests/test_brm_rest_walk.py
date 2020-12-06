@@ -208,6 +208,70 @@ def test_tree_walker_ok_repositories_ignored():
 
 
 @responses.activate
+def test_tree_walker_ok_hashes():
+    links_page = """\n
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>title</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <a href="f">f</a>       d  s u
+  </body>
+</html>
+    """
+    base_url = ctx.BRM_SERVER.rstrip('/')
+    api_base_url = f'{base_url}{ctx.BRM_API_ROOT}'
+    repositories_url = f'{api_base_url}repositories/'
+
+    responses.add(responses.GET, base_url,
+                  json={'go': 'ahead'}, status=200)
+    responses.add(responses.GET, api_base_url,
+                  json={'api': 'found'}, status=200)
+
+    repositories_in = [
+        {
+            'key': '1',
+            'type': 'LOCAL',
+            'description': 'describing me',
+            'url': f'{api_base_url}data',
+            'packageType': 'packageType value',
+        }
+    ]
+    responses.add(responses.GET, repositories_url,
+                  json=repositories_in, status=200)
+    name_a_txt = "a.txt"
+    leaf_a_url = f'{api_base_url}data/{name_a_txt}'
+    content_a_txt = "This is ${data_root}/a.txt with a newline at the end of the file.\n"
+    expected_digests = {
+        brm.MD5: "921214c14fda7cd320caf04cfa26a224",
+        brm.SHA1: "7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c",
+        brm.SHA256: "fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f",
+    }
+    name_a_txt_md5 = f"{name_a_txt}.{brm.MD5}"
+    content_a_txt_md5 = expected_digests[brm.MD5]
+    name_a_txt_sha1 = f"{name_a_txt}.{brm.SHA1}"
+    content_a_txt_sha1 = expected_digests[brm.SHA1]
+    name_a_txt_sha256 = f"{name_a_txt}.{brm.SHA256}"
+    content_a_txt_sha256 = expected_digests[brm.SHA256]
+
+    responses.add(responses.GET, leaf_a_url,
+                  body=content_a_txt, status=200)
+    responses.add(responses.GET, f"{leaf_a_url}.{brm.MD5}",
+                  body=content_a_txt_md5, status=200)
+    responses.add(responses.GET, f"{leaf_a_url}.{brm.SHA1}",
+                  body=content_a_txt_sha1, status=200)
+    responses.add(responses.GET, f"{leaf_a_url}.{brm.SHA256}",
+                  body=content_a_txt_sha256, status=200)
+
+    digests = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token).links(leaf_a_url)
+    assert digests == expected_digests
+
+
+@responses.activate
 def test_tree_walker_ok_links():
     links_page = """\n
 <!DOCTYPE html>
@@ -247,49 +311,6 @@ def test_tree_walker_ok_links():
     responses.add(responses.GET, links_url,
                   body=links_page, status=200)
     links = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token).links(links_url)
-    assert links == ['f']
-
-
-@responses.activate
-def test_tree_walker_ok_links():
-    links_page = """\n
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>title</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-  </head>
-  <body>
-    <a href="f">f</a>       d  s u
-  </body>
-</html>
-    """
-    base_url = ctx.BRM_SERVER.rstrip('/')
-    api_base_url = f'{base_url}{ctx.BRM_API_ROOT}'
-    repositories_url = f'{api_base_url}repositories/'
-    leaf_url = f'{api_base_url}a.txt'
-
-    responses.add(responses.GET, base_url,
-                  json={'go': 'ahead'}, status=200)
-    responses.add(responses.GET, api_base_url,
-                  json={'api': 'found'}, status=200)
-
-    repositories_in = [
-        {
-            'key': '1',
-            'type': 'LOCAL',
-            'description': 'describing me',
-            'url': f'{api_base_url}data',
-            'packageType': 'packageType value',
-        }
-    ]
-    responses.add(responses.GET, repositories_url,
-                  json=repositories_in, status=200)
-    responses.add(responses.GET, leaf_url,
-                  body=links_page, status=200)
-    links = brm.TreeWalker(server_url=brm.brm_server, api_root=brm.brm_api_root, username=brm.brm_user, api_token=brm.brm_token).hashes(leaf_url)
     assert links == ['f']
 
 
