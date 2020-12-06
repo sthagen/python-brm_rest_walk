@@ -1,5 +1,19 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=missing-docstring,unused-import,reimported
+"""
+Some tree info:
+.
+└── data
+    ├── a.txt
+    ├── a.txt.md5
+    ├── a.txt.sha1
+    ├── a.txt.sha256
+    └── b
+        ├── b.txt
+        ├── b.txt.md5
+        ├── b.txt.sha1
+        └── b.txt.sha256
+"""
 import datetime as dti
 import pytest  # type: ignore
 
