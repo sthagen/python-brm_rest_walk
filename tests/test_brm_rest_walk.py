@@ -83,6 +83,10 @@ def test_parse_autoindex_ok_empty():
     assert brm.parse_autoindex('') == []
 
 
+def test_parse_autoindex_map_ok_empty():
+    assert brm.autoindex_map('') == {}
+
+
 def test_parse_autoindex_ok_nonsense():
     assert brm.parse_autoindex('There is nothing useful in here') == []
 
