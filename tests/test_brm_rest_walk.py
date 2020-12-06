@@ -483,19 +483,18 @@ def test_tree_walker_ok_tree_leaf_page():
             'https://example.com/api/data': {
                 '@e': ['a.txt', 'b/'],
                 'a.txt': {
-                    '@n': {
-                        'api_ts': '22-Aug-2019 09:53',
-                        'h_size': '2.50',
-                        'h_unit': 'MB',
-                        'md5': '921214c14fda7cd320caf04cfa26a224',
-                        'name': 'a.txt',
-                        'sha1': '7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c',
-                        'sha256': 'fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f',
-                        'url': 'https://example.com/api/data/a.txt'
-                    }
+                    'api_ts': '22-Aug-2019 09:53',
+                    'h_size': '2.50',
+                    'h_unit': 'MB',
+                    'md5': '921214c14fda7cd320caf04cfa26a224',
+                    'name': 'a.txt',
+                    'sha1': '7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c',
+                    'sha256': 'fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f',
+                    'url': 'https://example.com/api/data/a.txt'
                 },
-                'b/': {'@e': ['b.txt']
-                       }
+                'b/': {
+                    '@e': ['b.txt']
+                }
             }
         }
     }
@@ -558,7 +557,7 @@ def test_tree_walker_ok_tree_leaf_page():
                     tree[level][url][relative_link][brm.EDGE] = data[brm.HREFS]
                 else:
                     data = walker.repository_page(f"{url}")
-                    tree[level][url][relative_link][brm.NODE] = {
+                    tree[level][url][relative_link] = {
                         "url": f"{url}/{relative_link}",
                         **data[brm.META].get(relative_link, {"name": None, "api_ts": None, "h_size": None, "h_unit": None}),
                         **walker.hashes(f"{url}/{relative_link}"),
