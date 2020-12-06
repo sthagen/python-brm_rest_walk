@@ -622,30 +622,25 @@ def test_tree_walker_ok_tree_edge_leaf_page():
             'https://example.com/api/data': {
                 '@e': ['a.txt', 'b/'],
                 'a.txt': {
-                    '@n': {
-                        'api_ts': '22-Aug-2019 09:53',
-                        'h_size': '2.50',
-                        'h_unit': 'MB',
-                        'md5': '921214c14fda7cd320caf04cfa26a224',
-                        'name': 'a.txt',
-                        'sha1': '7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c',
-                        'sha256': 'fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f',
-                        'url': 'https://example.com/api/data/a.txt'
-                    }
-                },
+                    'api_ts': '22-Aug-2019 09:53',
+                    'h_size': '2.50',
+                    'h_unit': 'MB',
+                    'md5': '921214c14fda7cd320caf04cfa26a224',
+                    'name': 'a.txt',
+                    'sha1': '7c6b7b5a662dcf0a21253bc2576d614f6b7fdc9c',
+                    'sha256': 'fd60560f94c1ad21d45e2383f974dd77df582f7336816b7fb367d70ff001fc8f',
+                    'url': 'https://example.com/api/data/a.txt'},
                 'b/': {
                     '@e': ['b.txt'],
                     'b.txt': {
-                        '@n': {
-                            'api_ts': '22-Aug-2020 09:53',
-                            'h_size': '1.23',
-                            'h_unit': 'kB',
-                            'md5': '640ecd5a7cf34cbf8a921b37731db28b',
-                            'name': 'b.txt',
-                            'sha1': 'd07cd80af550e403df824d64feb67e34a9fbf020',
-                            'sha256': '98dccf9bba2c9294ffcf7772d9dc72f80580d6c08cae4537dd861faa3c85d25e',
-                            'url': 'https://example.com/api/data/b/b.txt'
-                        }
+                        'api_ts': '22-Aug-2020 09:53',
+                        'h_size': '1.23',
+                        'h_unit': 'kB',
+                        'md5': '640ecd5a7cf34cbf8a921b37731db28b',
+                        'name': 'b.txt',
+                        'sha1': 'd07cd80af550e403df824d64feb67e34a9fbf020',
+                        'sha256': '98dccf9bba2c9294ffcf7772d9dc72f80580d6c08cae4537dd861faa3c85d25e',
+                        'url': 'https://example.com/api/data/b/b.txt'
                     }
                 }
             }
@@ -710,7 +705,7 @@ def test_tree_walker_ok_tree_edge_leaf_page():
                     tree[level][url][relative_link][brm.EDGE] = data[brm.HREFS]
                 else:
                     data = walker.repository_page(f"{url}")
-                    tree[level][url][relative_link][brm.NODE] = {
+                    tree[level][url][relative_link] = {
                         "url": f"{url}/{relative_link}",
                         **data[brm.META].get(relative_link, {"name": None, "api_ts": None, "h_size": None, "h_unit": None}),
                         **walker.hashes(f"{url}/{relative_link}"),
@@ -725,7 +720,7 @@ def test_tree_walker_ok_tree_edge_leaf_page():
                         tree[level][url][relative_link][p1][brm.EDGE] = data[brm.HREFS]
                     else:
                         data = walker.repository_page(f"{url}/{relative_link}")
-                        tree[level][url][relative_link][p1][brm.NODE] = {
+                        tree[level][url][relative_link][p1] = {
                             "url": f"{url}/{relative_link}{p1}",
                             **data[brm.META].get(p1, {"name": None, "api_ts": None, "h_size": None, "h_unit": None}),
                             **walker.hashes(f"{url}/{relative_link}{p1}"),
