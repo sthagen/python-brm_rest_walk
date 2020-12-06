@@ -101,6 +101,12 @@ def test_parse_autoindex_nok_start_token_nonsense():
         brm.parse_autoindex('<a href="There is nothing useful in here')
 
 
+def test_parse_autoindex_map_nok_start_token_nonsense():
+    message = r"not enough values to unpack \(expected 2, got 1\)"
+    with pytest.raises(ValueError, match=message):
+        brm.autoindex_map('<a href="There is nothing useful in here')
+
+
 def test_parse_autoindex_nok_start_token_href_nonsense():
     message = r"not enough values to unpack \(expected 2, got 1\)"
     with pytest.raises(ValueError, match=message):
