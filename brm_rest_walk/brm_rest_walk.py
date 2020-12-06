@@ -55,6 +55,8 @@ META = '@m'
 
 EASING = True
 
+KNOWN_DIGESTS = (MD5 := 'md5', SHA1 := 'sha1', SHA256 := 'sha256')
+
 
 def easing():
     """Be nice."""
@@ -111,6 +113,16 @@ class TreeWalker:  # pylint: disable=bad-continuation,expression-not-assigned
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", category=InsecureRequestWarning)
             return self._session.get(url, verify=False, params=params)
+
+    def hashes(self, url):
+        """Retrieve the repository tree leaf hashes from convention."""
+        digests = {}
+        for digest in KNOWN_DIGESTS:
+            digest_url = f'{url}.{digest}'
+            response = self._fetch(digest_url)
+            response.raise_for_status()
+            digests[digest] = response.text.strip()
+        return digests
 
     def links(self, url):
         """Retrieve the repository tree leaf ward links from HTML a tags per tree link (excluding ..)."""
