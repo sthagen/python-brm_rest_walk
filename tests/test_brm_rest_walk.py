@@ -137,6 +137,12 @@ def test_parse_autoindex_ok_minimal():
     assert brm.parse_autoindex(page_text) == [(f, d, s, u)]
 
 
+def test_parse_autoindex_map_ok_minimal():
+    f, d, s, u = 'a.txt', '22-Aug-2019 09:53', '2.50', 'MB'
+    page_text = f'<a href="{f}">a.txt</a>       {d}  {s} {u}'
+    assert brm.autoindex_map(page_text) == {f: {"name": f, "api_ts": d, "h_size": s, "h_unit": u}}
+
+
 @responses.activate
 def test_meta_equests_and_mock_responses_simple():
     responses.add(responses.GET, 'http://example.com/api/1/foobar',
