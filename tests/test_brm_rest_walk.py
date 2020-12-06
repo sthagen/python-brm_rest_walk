@@ -125,6 +125,12 @@ def test_parse_autoindex_nok_start_token_href_link_nonsense():
         brm.parse_autoindex('<a href="maybe">link</a>There_is_still_nothing_useful_in_here_and_no_spaces_to_split_on')
 
 
+def test_parse_autoindex_map_nok_start_token_href_link_nonsense():
+    message = r"not enough values to unpack \(expected 3, got 1\)"
+    with pytest.raises(ValueError, match=message):
+        brm.autoindex_map('<a href="maybe">link</a>There_is_still_nothing_useful_in_here_and_no_spaces_to_split_on')
+
+
 def test_parse_autoindex_ok_minimal():
     f, d, s, u = 'a.txt', '22-Aug-2019 09:53', '2.50', 'MB'
     page_text = f'<a href="{f}">a.txt</a>       {d}  {s} {u}'
