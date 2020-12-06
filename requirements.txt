@@ -4,6 +4,7 @@ coverage
 flake8
 mypy
 pylint
+pyperf
 pytest
 requests
 responses
