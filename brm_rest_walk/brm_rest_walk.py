@@ -7,6 +7,7 @@ import os
 import random
 import sys
 import time
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 import warnings
 
 from bs4 import BeautifulSoup
@@ -299,3 +300,17 @@ def dump(tree):
     """Minimal implementation of JSON dump."""
     with open("tree.json", "wt", encoding=ENCODING) as handle:
         json.dump(tree, handle, indent=2)
+
+
+def add_element(below: defaultdict, path_sequence: List[str], data) -> None:
+    """Helper function."""
+    head, tail = 0, slice(1, None)  # seq[0], seq[1:]
+    if len(path_sequence) == 1:
+        below[path_sequence[head]] = data
+    else:
+        add_element(below[path_sequence[head]], path_sequence[tail], data)
+
+
+def tree() -> defaultdict:
+    """Recursive function generator."""
+    return defaultdict(tree)
